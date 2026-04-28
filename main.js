@@ -37,10 +37,9 @@
     };
 
     var tagButtons = {
-        overlay: document.getElementById('tagOverlayBtn'),
+        music:   document.getElementById('tagMusicBtn'),
         vo:      document.getElementById('tagVOBtn'),
         sfx:     document.getElementById('tagSFXBtn'),
-        music:   document.getElementById('tagMusicBtn'),
         clear:   document.getElementById('tagClearBtn')
     };
 
@@ -187,9 +186,9 @@
 
     var tagMapping = {
         overlay: 1,
+        music:   4,
         vo:      2,
-        sfx:     3,
-        music:   4
+        sfx:     3
     };
 
     Object.keys(tagMapping).forEach(function (tagKey) {
