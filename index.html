@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Mixing Desk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --accent-primary: #3892f2;
+            --accent-secondary: #ff6b35;
+            --accent-music: #a855f7;
+            --accent-vo: #fb923c;
+            --accent-sfx: #fbbf24;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border-color: #2a2a2a;
+            --slider-track: #1a1a1a;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        .mixer-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 12px;
+            gap: 12px;
+        }
+
+
+        .mixer-header {
+            text-align: center;
+            border-bottom: 2px solid var(--accent-primary);
+            padding-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(56, 146, 242, 0.1);
+        }
+
+        .mixer-header p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .mixer-desk {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+            flex: 1;
+            gap: 12px;
+            background: linear-gradient(180deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 10px 40px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        .mixer-desk::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: .5px;
+            background: linear-gradient(90deg, transparent, var(--accent-primary) 50%, transparent);
+            opacity: 0.5;
+        }
+
+        .channel-strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            flex: 1;
+            max-width: none;
+        }
+
+        .channel-label {
+            font-size: 8px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid currentColor;
+            transition: all 0.3s ease;
+        }
+
+        .channel-strip.music .channel-label {
+            color: var(--accent-music);
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .channel-strip.vo .channel-label {
+            color: var(--accent-vo);
+            background: rgba(255, 154, 74, 0.1);
+        }
+
+        .channel-strip.sfx .channel-label {
+            color: var(--accent-sfx);
+            background: rgba(74, 255, 154, 0.1);
+        }
+
+        .channel-strip.master .channel-label {
+            color: var(--accent-primary);
+            background: rgba(37, 99, 235, 0.15);
+            padding: 6px 10px;
+            font-size: 8px;
+        }
+
+
+        /* Chrome & Safari */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 44px;
+            height: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 50%, #c0c0c0 100%);
+            border: 1px solid #404040;
+            border-radius: 3px;
+            cursor: grab;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            transition: all 0.1s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%);
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: transparent;
+            height: 4px;
+            border: none;
+            border-radius: 2px;
+        }
+
+        /* Firefox */
+        input[type="range"]::-moz-range-thumb {
+            width: 44px;
+            height: 12px;
+            background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 50%, #c0c0c0 100%);
+            border: 1px solid #404040;
+            border-radius: 3px;
+            cursor: grab;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            transition: all 0.1s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:active {
+            cursor: grabbing;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 50%, #e0e0e0 100%);
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: transparent;
+            border: none;
+        }
+
+        .slider-value {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            min-width: 30px;
+            text-align: center;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-strip.music .slider-value {
+            color: var(--accent-music);
+        }
+
+        .channel-strip.vo .slider-value {
+            color: var(--accent-vo);
+        }
+
+        .channel-strip.sfx .slider-value {
+            color: var(--accent-sfx);
+        }
+
+        .channel-strip.master .slider-value {
+            color: var(--accent-primary);
+            font-size: 12px;
+        }
+
+        .mixer-footer {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            padding-top: 8px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(56, 146, 242, 0.1);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, rgba(56, 146, 242, 0.2) 100%);
+            box-shadow: 0 0 20px rgba(56, 146, 242, 0.3);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 0 10px rgba(56, 146, 242, 0.2);
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            justify-content: flex-end;
+            height: 180px;
+        }
+
+        .slider-wrapper {
+            height: 160px;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(90deg, var(--slider-track) 0%, var(--bg-secondary) 50%, var(--slider-track) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            writing-mode: bt-lr;
+            transform: rotate(0deg);
+            width: 32px;
+            height: 150px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .channel-strip.master {
+            order: 4;
+            margin-left: 8px;
+            padding-left: 8px;
+            border-left: 2px solid var(--accent-primary);
+        }
+
+        .channel-strip.music {
+            order: 1;
+        }
+
+        .channel-strip.vo {
+            order: 2;
+        }
+
+        .channel-strip.sfx {
+            order: 3;
+        }
+
+        /* Status indicator */
+        .status {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: center;
+            letter-spacing: 1px;
+            padding-top: 4px;
+        }
+
+        .status.active {
+            color: var(--accent-primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50%       { opacity: 1; }
+        }
+
+        /* ---- MDtag tagging section ---- */
+        .tag-section {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .tag-section-title {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .tag-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .tag-btn {
+            flex: 1;
+            padding: 5px 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+
+        .tag-btn-music {
+            color: var(--accent-music);
+            border-color: var(--accent-music);
+            background: rgba(168,85,247,0.08);
+        }
+        .tag-btn-music:hover {
+            background: rgba(168,85,247,0.22);
+            box-shadow: 0 0 12px rgba(168,85,247,0.3);
+            transform: translateY(-1px);
+        }
+
+        .tag-btn-vo {
+            color: var(--accent-vo);
+            border-color: var(--accent-vo);
+            background: rgba(251,146,60,0.08);
+        }
+        .tag-btn-vo:hover {
+            background: rgba(251,146,60,0.22);
+            box-shadow: 0 0 12px rgba(251,146,60,0.3);
+            transform: translateY(-1px);
+        }
+
+        .tag-btn-sfx {
+            color: var(--accent-sfx);
+            border-color: var(--accent-sfx);
+            background: rgba(251,191,36,0.08);
+        }
+        .tag-btn-sfx:hover {
+            background: rgba(251,191,36,0.22);
+            box-shadow: 0 0 12px rgba(251,191,36,0.3);
+            transform: translateY(-1px);
+        }
+
+        .tag-btn-clear {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+            background: transparent;
+        }
+        .tag-btn-clear:hover {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .tag-btn-overlay {
+            color: #34d399;
+            border-color: #34d399;
+            background: rgba(52,211,153,0.08);
+        }
+        .tag-btn-overlay:hover {
+            background: rgba(52,211,153,0.22);
+            box-shadow: 0 0 12px rgba(52,211,153,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Layer count badges shown inside each channel strip */
+        .layer-count {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 2px 6px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .channel-strip.music .layer-count { color: var(--accent-music); border-color: var(--accent-music); }
+        .channel-strip.vo    .layer-count { color: var(--accent-vo);    border-color: var(--accent-vo);    }
+        .channel-strip.sfx   .layer-count { color: var(--accent-sfx);   border-color: var(--accent-sfx);   }
+    </style>
+</head>
+<body>
+    <div class="mixer-container">
+        <div class="mixer-header">
+            <p>Mixing Desk</p>
+        </div>
+
+        <div class="mixer-desk">
+            <!-- Master Channel -->
+            <div class="channel-strip master">
+                <div class="channel-label">Master</div>
+                <div class="slider-container">
+                    <div class="slider-wrapper">
+                        <input type="range" id="masterSlider" min="-48" max="24" value="0" step="0.5" class="vertical-slider">
+                    </div>
+                </div>
+                <div class="slider-value"><span id="masterValue">0</span>dB</div>
+            </div>
+
+            <!-- Music Channel -->
+            <div class="channel-strip music">
+                <div class="channel-label">Music</div>
+                <div class="slider-container">
+                    <div class="slider-wrapper">
+                        <input type="range" id="musicSlider" min="-48" max="24" value="0" step="0.5" class="vertical-slider">
+                    </div>
+                </div>
+                <div class="slider-value"><span id="musicValue">0</span>dB</div>
+                <div class="layer-count" id="musicCount">0</div>
+            </div>
+
+            <!-- VO Channel -->
+            <div class="channel-strip vo">
+                <div class="channel-label">VO</div>
+                <div class="slider-container">
+                    <div class="slider-wrapper">
+                        <input type="range" id="voSlider" min="-48" max="24" value="0" step="0.5" class="vertical-slider">
+                    </div>
+                </div>
+                <div class="slider-value"><span id="voValue">0</span>dB</div>
+                <div class="layer-count" id="voCount">0</div>
+            </div>
+
+            <!-- SFX Channel -->
+            <div class="channel-strip sfx">
+                <div class="channel-label">SFX</div>
+                <div class="slider-container">
+                    <div class="slider-wrapper">
+                        <input type="range" id="sfxSlider" min="-48" max="24" value="0" step="0.5" class="vertical-slider">
+                    </div>
+                </div>
+                <div class="slider-value"><span id="sfxValue">0</span>dB</div>
+                <div class="layer-count" id="sfxCount">0</div>
+            </div>
+        </div>
+
+        <!-- MDtag layer-tagging section -->
+        <div class="tag-section">
+            <div class="tag-section-title">Tag Selected Layers</div>
+            <div class="tag-row">
+                <button class="tag-btn tag-btn-music" id="tagMusicBtn">Music</button>
+                <button class="tag-btn tag-btn-vo" id="tagVOBtn">VO</button>
+                <button class="tag-btn tag-btn-sfx" id="tagSFXBtn">SFX</button>
+            </div>
+            <div class="tag-row" style="margin-top: 6px;">
+                <button class="tag-btn tag-btn-clear" id="tagClearBtn" style="flex: 1;">Clear Tag</button>
+            </div>
+        </div>
+
+        <div class="mixer-footer">
+            <button id="setupBtn">Setup Controls</button>
+            <button id="bakeBtn">Bake &amp; Remove</button>
+        </div>
+        <div class="status" id="status">Ready</div>
+    </div>
+
+    <script src="js/CSInterface.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+:root {
+    /* Spectrum 2 Palette (Dark Mode Base) */
+    --bg-app: #1e1e1e;
+    --bg-card: #292929;
+    --border-color: #3e3e3e;
+    --text-main: #e1e1e1;
+    --text-secondary: #959595;
+    --accent-blue: #027aff;
+    --accent-blue-hover: #268eff;
+    --radius-lg: 10px;
+    --radius-md: 6px;
+    --font-family: "Adobe Clean", "Inter", -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 12px;
+    user-select: none;
+    cursor: default;
+}
+
+/* Layout Containers */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+/* The "Card" Look */
+.card {
+    background-color: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+/* Input Styles */
+.input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.path-display {
+    background: #1a1a1a;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    font-size: 12px;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-secondary);
+}
+
+/* Button Styling */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 20px; /* Spectrum 2 pill shape */
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--accent-blue);
+    color: white;
+    flex-grow: 2;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-blue-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    flex-grow: 1;
+}
+
+.btn-secondary:hover {
+    background-color: #3a3a3a;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--accent-blue);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.icon-btn:hover {
+    background: rgba(2, 122, 255, 0.1);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 16px 0;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}

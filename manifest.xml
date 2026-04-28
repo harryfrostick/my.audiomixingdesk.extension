@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionManifest Version="7.0" ExtensionBundleId="my.audiomixingdesk.extension" ExtensionBundleVersion="1.0.0"
+    ExtensionBundleName="Audio Mixing Desk" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ExtensionList>
+        <Extension Id="my.audiomixingdesk.extension" Version="1.0.0" />
+    </ExtensionList>
+    <ExecutionEnvironment>
+        <HostList>
+            <Host Name="AEFT" Version="[13.0,99.9]" />
+        </HostList>
+        <LocaleList>
+            <Locale Code="All" />
+        </LocaleList>
+        <RequiredRuntimeList>
+            <RequiredRuntime Name="CSXS" Version="7.0" />
+        </RequiredRuntimeList>
+    </ExecutionEnvironment>
+    <DispatchInfoList>
+        <Extension Id="my.audiomixingdesk.extension">
+            <DispatchInfo>
+                <HostAttributes>
+                    <Host Name="AEFT" />
+                </HostAttributes>
+                <UI>
+                    <Type>Panel</Type>
+                    <Menu>Audio Mixing Desk</Menu>
+                    <Geometry>
+                        <Size>
+                            <Width>300</Width>
+                            <Height>400</Height>
+                        </Size>
+                    </Geometry>
+                </UI>
+                <Resources>
+                    <MainPath>./index.html</MainPath>
+                    <ScriptPath>./jsx/hostscript.jsx</ScriptPath>
+                </Resources>
+            </DispatchInfo>
+        </Extension>
+    </DispatchInfoList>
+</ExtensionManifest>
